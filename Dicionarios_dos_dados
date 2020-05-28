@@ -1,0 +1,24 @@
+#Link . 
+https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
+
+
+##Dicionarios dos dados
+
+###Informações sobre atributos:
+
+1) Número de identificação
+2) Diagnóstico (M = maligno, B = benigno)
+3-32)
+
+São computadas dez características de valor real para cada núcleo celular:
+
+a) raio (média das distâncias do centro aos pontos do perímetro)
+b) textura (desvio padrão dos valores da escala de cinza)
+c) perímetro
+d) área
+e) suavidade (variação local no comprimento do raio)
+f) compactação (perímetro ^ 2 / área - 1,0)
+g) concavidade (severidade das partes côncavas do contorno)
+h ) pontos côncavos (número de partes côncavas do contorno)
+i) simetria
+j) dimensão fractal ("aproximação da costa" - 1)
