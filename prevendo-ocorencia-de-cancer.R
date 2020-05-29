@@ -1,4 +1,9 @@
 # Colectando os Dados
+install.packages("caret")
+#library(caret)
+
+        
+library(gmodels)
 library(readr)
 dados <- read.csv("bc_data.csv", stringsAsFactors = FALSE)
 dim(dados)
@@ -21,7 +26,7 @@ table(dados$diagnosis)
 dados$diagnosis <- factor(dados$diagnosis, levels = c('B','M'), labels = c('Benigno', 'Maligno'))
 str(dados$diagnosis)
 
-#Verificando a porporca/percentual das observacoes
+#Verificando a porporcao/percentual das observacoes
 
 round(prop.table(table(dados$diagnosis))*100, digit=1)
 
@@ -89,6 +94,11 @@ modelo <- knn(train = dados_treino,
               cl  = dados_treino_labels,
               k = 21)
 
+
+# Criando modelo com caret
+?trainControl
+
+
 # A funcao knn reorna objecto do tipo factor
 class(modelo)
 
@@ -96,32 +106,68 @@ class(modelo)
 ############################### Interpretando o Modelo ##############################
 
 
-library(gmodels)
+#library(gmodels)
  #criando uma tabela cruzada
 
+ # Criando uma cross table - tabela cruzada
+ # prop.chisq = FALSE - Nao mostrar o teste de q quadrado
+CrossTable(x = dados_teste_labels, y = modelo, prop.chisq = FALSE )
+
+CrossTable(x = dados_teste_labels, y = modelo, prop.chisq = FALSE)
 
 
 
+# Optimizando performace do modelo
+
+# Padronizando o score-z com  funcao scale()
+?scale()
+# permite padronizar, "normalizar" com uma outra tecnica
+head(dados)
+dados_z <- as.data.frame(scale(dados[-1]))
+
+# medidas de tendencia central
+summary(dados_z$area_mean)
+
+# Criando novos datasets
+
+dados_treino <- dados_z[1:469, ]
+dados_teste <- dados_z[470:569, ]
+
+dados_treino_labels <- dados_z[1:469, 1]
+dados_teste_labels <- dados_z[470:569, 1]
+
+
+# Reclassificando
+
+modelo_2 <- knn(train = dados_treino,
+                test = dados_teste,
+                cl = dados_treino_labels,
+                k = 21)
+
+# Criando uma CrossTable
+
+CrossTable(x = dados_teste_labels, y = modelo_2, prop.chisq = FALSE)
+
+# E necessario criar os processos varias vezes, modeificando o valor de K,
+# para avaliar a performace do modelo, se melhora ou nao, e ficar com a menor taxa possivel de erro
 
 
 
+# Calculado a taxa de erro
+
+prev = NULL
+taxa_erro = NULL
 
 
+for(i in 1:20){
+  set.seed(101)
+  prev = knn(train = dados_treino, test = dados_teste, cl = dados_treino_labels, k=i)
+  taxa_erro[i] = mean(dados$diagnosis != prev)
+}
 
+# Obtendo var de k e taxa de erros
+#library(ggplot2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#k.value <- 1:20
+#df_erro <- data.frame(taxa_erro, k.value)
 
